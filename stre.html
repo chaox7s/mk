@@ -1,0 +1,406 @@
+﻿<html>
+
+<body>
+	<li id = "renderer" style="display:none;">
+		<input type="checkbox"></input>
+		<button>个位</button>
+		
+		<span>
+		<span style="background-color:none;">0</span>
+		<span>1</span>
+		<span>2</span>
+		<span>3</span>
+		<span>4</span>
+		<span>5</span>
+		<span>6</span>
+		<span>7</span>
+		<span>8</span>
+		<span>9</span>
+		</span>
+		
+		<!--
+		<font width="100" style="background-color:red;">1</font>
+		<font>1</font>
+		<font>1</font>
+		<font>1</font>-->
+		
+		
+		<button onclick="operat(1)">大</button>
+		<button onclick="operat(2)">小</button>
+		<button onclick="operat(3)">单</button>
+		<button onclick="operat(4)">双</button>
+		<button onclick="operat(5)">清</button>
+		
+		<font></font>
+		
+	</li>
+
+	<ul id="container">
+		
+	</ul>
+	
+	
+	<hr/>
+
+	<div>
+		
+		（<input type="radio" name="rad" value="1">开</input>
+		<input type="radio" name="rad" value="0">不开</input>）
+		
+		<ul id= "boxes">
+		
+		<li><input type="checkbox" value="0">0</input></li>
+		<li><input type="checkbox" value="1">1</input></li>
+		<li><input type="checkbox" value="2">2</input></li>
+		<li><input type="checkbox" value="3">3</input></li>
+		<li><input type="checkbox" value="4">4</input></li>
+		<li><input type="checkbox" value="5">5</input></li>
+		<li><input type="checkbox" value="6">6</input></li>
+		<li><input type="checkbox" value="7">7</input></li>
+		<li><input type="checkbox" value="8">8</input></li>
+		<li><input type="checkbox" value="9">9</input></li>
+		
+		</ul>
+		
+		<button onclick="pick()">确认</button>
+		<button onclick="boxAll(true)">全选</button>
+		<button onclick="boxAll(false)">全不选</button>
+		
+		
+		<p id="board"></p>
+		
+	</div>
+	
+<body>
+
+	<script>
+		var list = [] ;
+		var col = 10 ;
+		var row = 5 ;
+		var row_label = ['万位' ,'千位' ,'百位' ,'十位' , '个位'] ;
+		
+		
+		var container = document.getElementById('container') ;
+		
+		(function(){
+			var i , j ;
+			
+			
+			var renderer = document.getElementById('renderer') ;
+			
+			
+			for(i = 0 ; i < row ; i++){
+				var element = renderer.cloneNode(true) ;
+				element.id = "" ;
+				element.style.display = 'block' ;
+				
+				var button = element.children[0] ;
+				button.value = i ;
+				
+				button = element.children[1] ;
+				button.innerText = row_label[i] ;
+				
+				for(j = 1 ; j <= 5 ; j ++ ){
+					button = element.children[2 + j] ;
+					button.value = [j , i] ;
+					button.onclick = operat ;
+				}
+				
+				
+				container.appendChild(element) ;
+				
+				var array = list[i] ;
+				if(!array){
+					array = list[i] = [1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1] ;
+				}
+				
+			}
+		})() ;
+		
+		
+		
+		
+		
+		function updateUnit($row){
+			var array = list[$row] ;
+			
+			var renderer = container.children[$row] ;
+			var spans = renderer.children[2] ;
+			
+			for(var i = 0 ; i < col ; i ++){
+				var element = spans.children[i] ;
+				
+				if(array[i]){
+					element.style.backgroundColor = '' ;
+				}else{
+					element.style.backgroundColor = 'black' ;
+				}
+				
+				
+			}
+			
+			
+			
+			
+		}
+		
+		
+		function operat(event){
+			var slice = this.value.split(',') ;
+			var type = parseInt(slice[0]) ;
+			var $row = parseInt(slice[1]) ;
+			
+			var array = list[$row] ;
+			var renderer = container.children[$row] ;
+			var font = renderer.children[8] ;
+			
+			var message = font.innerText + this.innerText ;
+			
+			switch(type){
+				
+				case 1 :
+					array.forEach(f_large) ;
+					
+				break;
+				
+				case 2 :
+					array.forEach(f_small) ;
+					
+				break;
+				
+				case 3 :
+					array.forEach(f_single) ;
+					
+				break;
+				
+				case 4 :
+					array.forEach(f_double) ;
+					
+				break;
+				
+				case 5 :
+					array.forEach(f_clear) ;
+					message = '' ;
+					
+				break;
+			}
+			
+			
+			
+			font.innerText = message ;
+			
+			updateUnit($row) ;
+			
+		}
+		
+		
+		
+		
+		function f_large(item , index , array){
+			if(item > 0){
+				array[index] = index >= 5 ? 1 : 0 ;
+			}
+		
+		}
+		
+		function f_small(item , index , array){
+			if(item > 0){
+				array[index] = index < 5 ? 1 : 0 ;
+			}
+		}
+		
+		
+		function f_single(item , index , array){
+			if(item > 0){
+				array[index] = index % 2 != 0 ? 1 : 0 ;
+			}
+		}
+		
+		
+		function f_double(item , index , array){
+			if(item > 0){
+				array[index] = index % 2 == 0 ? 1 : 0 ;
+			}
+		}
+		
+		function f_clear(item , index , array){
+			array[index] = 1 ;
+		}
+		
+		
+		//----------------------------------------------------------------------
+		
+		
+		
+		function getSelect(){
+			var sel = [] ;
+		
+			for(var i = 0 ; i < row ; i ++){
+				var renderer = container.children[i] ; 
+				var check = renderer.children[0] ;
+				
+				if(check.checked){
+					sel.push(i) ;
+				}
+			}
+			
+			
+			return sel ;
+		}
+		
+		
+		
+		function boxAll(checked){
+			var boxes = document.getElementById('boxes') ;
+			
+			for(var i = 0 ; i < boxes.children.length ; i ++){
+				var element = boxes.children[i] ;
+ 				var checkbox = element.children[0] ;
+				checkbox.checked = checked ;
+			}
+			
+		}
+		
+		
+		function getNumbers(){
+			var numbs = [] ;
+			var boxes = document.getElementById('boxes') ;
+			var checked = false ;
+			
+			for(var i = 0 ; i < boxes.children.length ; i ++){
+				var element = boxes.children[i] ;
+ 				var checkbox = element.children[0] ;
+				
+				numbs[i] = checkbox.checked ? 1 : 0 ;
+				
+				if(checkbox.checked){
+					checked = true ;
+				}
+				
+			}
+			
+			
+			return checked ? numbs : null ;
+		}
+		
+		
+		function pick(){
+			var i , $row , $col ,  message;
+			var sel = getSelect() ;
+			
+			if(sel.length == 0){
+				return ;
+			}
+			
+			var radios = document.getElementsByName('rad') ;
+			var open = -1 ;
+			for(i = 0 ; i < radios.length ; i ++){
+				var radio = radios[i] ;
+				if(radio.checked){
+					open = parseInt(radio.value) ;
+					break ;
+				}
+			}
+			
+			if(open == -1){
+				return ;
+			}
+			
+			
+			var numbs = getNumbers() ;
+			if(!numbs || numbs.length == 0){
+				return ;
+			}
+			
+			var numbs_sel = [] ;
+			for(i = 0 ; i < numbs.length ; i ++){
+				if(numbs[i]){
+					numbs_sel.push(i) ;
+				}
+			}
+			
+			
+			var templates = [] ;
+			
+			
+			for(i = 0 ; i < sel.length ; i ++){
+				$row = sel[i] ;
+				templates[$row] = [] ;
+				
+				var array = list[$row] ;
+				var live = false ;
+				
+				
+				for($col = 0 ; $col < array.length ; $col ++){
+					var $value = array[$col] ; 
+					
+					templates[$row][$col] = 0 ;
+					
+					
+					if(!$value){
+						continue ;
+					}
+					
+					var $checked = numbs[$col] ;
+					
+					
+					
+					if(open){	//开指定数字
+						
+						if($checked){
+							live = true ;
+							templates[$row][$col] = 1 ;
+						}
+						
+					}else{		//不开指定数字
+						
+						if(!$checked){
+							live = true ;
+							templates[$row][$col] = 1 ;
+						}
+						
+						
+					}
+					
+					
+					
+				}
+				
+				
+				if(!live){
+					message = row_label[$row] + (open ? '(开)' : '(不开)') + numbs_sel.toString() + '失败！' ;
+					alert(message) ;
+					return ;
+				}
+				
+				
+			}
+			
+			
+			var labels = [] ;
+			for($row in templates){
+				list[$row] = templates[$row] ;
+				updateUnit($row) ;
+				
+				labels.push(row_label[$row]) ;
+			}
+			
+			
+			var board = document.getElementById('board') ;
+			message = labels.toString() + (open ? '(开)' : '(不开)') + numbs_sel.toString() + '<br/>' ;
+			board.innerHTML += message ;
+			
+			
+			//console.log(sel , open , numbs) ;
+			
+		}
+		
+		
+		
+		
+		
+		
+
+	</script>
+
+</html>

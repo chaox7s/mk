@@ -1,0 +1,92 @@
+{
+	"name": "kitau" ,
+	"description": "funny",
+	"version": "1.0" ,
+	"manifest_version" : 2 ,
+  
+	"permissions": ["tabs" , "contextMenus" , "<all_urls>"] ,
+  
+	"background": {
+		"scripts": ["background.js"]
+	} ,
+	
+	
+	
+	"icons": {
+		"16": "i/icon16.png",
+		"48": "i/icon48.png",
+		"128": "i/icon128.png"
+	} ,
+	
+	
+	
+	"browser_action": {
+		"default_title": "k!"
+		, "default_popup" : "popup.html"
+	} ,
+	
+	
+	
+	"commands": {
+		"play": {
+			"suggested_key": {
+				"default": "Alt+1"
+			} ,
+			
+			"description": "paly music." ,
+			"global": true
+		}
+		
+		,
+		
+		
+		"active": {
+			"suggested_key": {
+				"default": "Alt+2"
+			} ,
+			
+			"description": "active music." ,
+			"global": true
+		}
+		
+		,
+		
+		
+		"prev": {
+			"suggested_key": {
+				"default": "Alt+PageUp"
+			} ,
+			
+			"description": "prev music." ,
+			"global": true
+		}
+		
+		,
+		
+		"next": {
+			"suggested_key": {
+				"default": "Alt+PageDown"
+			} ,
+			
+			"description": "next music." ,
+			"global": true
+		}
+		
+		
+	} ,
+	
+	
+  
+	"content_scripts": [
+		{
+			"matches": ["<all_urls>"] ,
+			"js": ["lib/jquery-3.1.1.js" ,"te.js"]
+		}
+	]
+  
+	,
+	
+	"web_accessible_resources" : [
+		"ten.js"
+	]
+}
